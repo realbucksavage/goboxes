@@ -1,6 +1,7 @@
 package machines
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/realbucksavage/goboxes/core"
@@ -24,20 +25,24 @@ func ReadVm(uuid string) VirtualMachine {
 	}
 }
 
-func (v *VirtualMachine) PowerOn() {
+func (v *VirtualMachine) PowerOn() error {
 	if v.VMState == "running" {
-		return
+		return fmt.Errorf("%s {%s} already in running state", v.Name, v.UUID)
 	}
 
 	core.ExecSubcommand("startvm", v.Name, "--type", "headless")
+
+	return nil
 }
 
-func (v *VirtualMachine) PowerOff() {
+func (v *VirtualMachine) PowerOff() error {
 	if v.VMState == "poweroff" {
-		return
+		return fmt.Errorf("%s {%s} is already in poweroff state", v.Name, v.UUID)
 	}
 
 	core.ExecSubcommand("controlvm", v.Name, "poweroff")
+
+	return nil
 }
 
 func stateInfo(uuid string) (string, error) {
