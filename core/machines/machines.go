@@ -10,6 +10,7 @@ import (
 var poweroffState = "poweroff"
 var poweronState = "running"
 
+// VirtualMachine represents a Virtual Machine
 type VirtualMachine struct {
 	UUID    string
 	Name    string
@@ -19,7 +20,9 @@ type VirtualMachine struct {
 	guestPoperties []GuestProperty
 }
 
-func ReadVm(uuid string) VirtualMachine {
+// ReadVM reads the information of the VM identified by uuid in a VirtualMachine
+// object.
+func ReadVM(uuid string) VirtualMachine {
 	m := stateInfoMap(uuid)
 
 	return VirtualMachine{
@@ -30,6 +33,8 @@ func ReadVm(uuid string) VirtualMachine {
 	}
 }
 
+// PowerOn starts a Virtual Mchine. This will return an error if the VM is already
+// in the ON state.
 func (v *VirtualMachine) PowerOn() error {
 	if v.VMState == poweronState {
 		return fmt.Errorf("%s {%s} already in running state", v.Name, v.UUID)
@@ -41,6 +46,8 @@ func (v *VirtualMachine) PowerOn() error {
 	return nil
 }
 
+// PowerOff shuts a Virtual Machine down. This will return an error if the VM is
+// already in the OFF state.
 func (v *VirtualMachine) PowerOff() error {
 	if v.VMState == poweroffState {
 		return fmt.Errorf("%s {%s} is already in poweroff state", v.Name, v.UUID)
@@ -52,25 +59,19 @@ func (v *VirtualMachine) PowerOff() error {
 	return nil
 }
 
-func (v *VirtualMachine) GetProperties() []GuestProperty {
-	if len(v.guestPoperties) == 0 {
-		v.RefreshGuestProperties()
-	}
-
-	return v.guestPoperties
-}
-
-func (v *VirtualMachine) RefreshGuestProperties() error {
+// GetProperties retuns the properties attached to the guest VM.
+// TODO: implement a way to cache these properties
+func (v *VirtualMachine) GetProperties() ([]GuestProperty, error) {
 	info, err := core.ExecSubcommand("guestproperty", "enumerate", v.UUID)
 	if err != nil {
-		return err
-	}
-
-	if info == "" {
-		return nil
+		return nil, err
 	}
 
 	props := []GuestProperty{}
+
+	if info == "" {
+		return props, nil
+	}
 
 	for _, line := range strings.Split(info, "\n") {
 		props = append(props, GuestProperty{}.FromString(line))
@@ -78,7 +79,7 @@ func (v *VirtualMachine) RefreshGuestProperties() error {
 
 	v.guestPoperties = props
 
-	return nil
+	return v.guestPoperties, nil
 }
 
 func stateInfo(uuid string) (string, error) {
