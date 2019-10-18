@@ -7,11 +7,16 @@ import (
 	"github.com/realbucksavage/goboxes/core"
 )
 
+var poweroffState = "poweroff"
+var poweronState = "running"
+
 type VirtualMachine struct {
 	UUID    string
 	Name    string
 	OsType  string
 	VMState string
+
+	guestPoperties []GuestProperty
 }
 
 func ReadVm(uuid string) VirtualMachine {
@@ -26,21 +31,52 @@ func ReadVm(uuid string) VirtualMachine {
 }
 
 func (v *VirtualMachine) PowerOn() error {
-	if v.VMState == "running" {
+	if v.VMState == poweronState {
 		return fmt.Errorf("%s {%s} already in running state", v.Name, v.UUID)
 	}
 
 	core.ExecSubcommand("startvm", v.Name, "--type", "headless")
+	v.VMState = poweronState
 
 	return nil
 }
 
 func (v *VirtualMachine) PowerOff() error {
-	if v.VMState == "poweroff" {
+	if v.VMState == poweroffState {
 		return fmt.Errorf("%s {%s} is already in poweroff state", v.Name, v.UUID)
 	}
 
-	core.ExecSubcommand("controlvm", v.Name, "poweroff")
+	core.ExecSubcommand("controlvm", v.Name, poweroffState)
+	v.VMState = poweroffState
+
+	return nil
+}
+
+func (v *VirtualMachine) GetProperties() []GuestProperty {
+	if len(v.guestPoperties) == 0 {
+		v.RefreshGuestProperties()
+	}
+
+	return v.guestPoperties
+}
+
+func (v *VirtualMachine) RefreshGuestProperties() error {
+	info, err := core.ExecSubcommand("guestproperty", "enumerate", v.UUID)
+	if err != nil {
+		return err
+	}
+
+	if info == "" {
+		return nil
+	}
+
+	props := []GuestProperty{}
+
+	for _, line := range strings.Split(info, "\n") {
+		props = append(props, GuestProperty{}.FromString(line))
+	}
+
+	v.guestPoperties = props
 
 	return nil
 }
