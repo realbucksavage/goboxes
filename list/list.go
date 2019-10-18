@@ -23,6 +23,12 @@ func (l ListCommands) Vms(running bool) (map[string]string, error) {
 	}
 
 	vms := make(map[string]string)
+
+	if info == "" {
+		// No VMs
+		return vms, nil
+	}
+
 	for _, line := range strings.Split(info, "\n") {
 		m := machineMatcher.FindStringSubmatch(line)
 
