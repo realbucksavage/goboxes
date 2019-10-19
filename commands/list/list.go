@@ -7,11 +7,15 @@ import (
 	"github.com/realbucksavage/goboxes/core"
 )
 
-type ListCommands struct{}
+// Commands struct gives access to all VBoxManage <list> commands
+// TODO: implement commands
+type Commands struct{}
 
 var machineMatcher = regexp.MustCompile(`\"(.*)\"\s\{(.*)\}`)
 
-func (l ListCommands) Vms(running bool) (map[string]string, error) {
+// Vms returns all VMs in UUID - Name key value pair. The UUID may be passed to
+// machines.ReadVM(string) to get a VM instance.
+func (l Commands) Vms(running bool) (map[string]string, error) {
 	cmdName := "vms"
 	if running {
 		cmdName = "runningvms"
@@ -23,6 +27,12 @@ func (l ListCommands) Vms(running bool) (map[string]string, error) {
 	}
 
 	vms := make(map[string]string)
+
+	if info == "" {
+		// No VMs
+		return vms, nil
+	}
+
 	for _, line := range strings.Split(info, "\n") {
 		m := machineMatcher.FindStringSubmatch(line)
 

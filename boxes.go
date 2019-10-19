@@ -1,7 +1,10 @@
 package goboxes
 
-import "github.com/realbucksavage/goboxes/list"
+import (
+	"github.com/realbucksavage/goboxes/commands/list"
+)
 
-func List() list.ListCommands {
-	return list.ListCommands{}
+// List function gives access to all possible <list> commands.
+func List() list.Commands {
+	return list.Commands{}
 }
