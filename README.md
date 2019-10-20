@@ -1,4 +1,4 @@
-# GoBoxes [![codebeat badge](https://codebeat.co/badges/aed17dc2-06d8-4f62-98df-1dceb9ba015e)](https://codebeat.co/projects/github-com-realbucksavage-goboxes-master)
+# GoBoxes [![Codacy Badge](https://api.codacy.com/project/badge/Grade/cfeb88ce4434454b9138fe7f71bba1bb)](https://www.codacy.com/manual/jgodara/goboxes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realbucksavage/goboxes&amp;utm_campaign=Badge_Grade) 
 
 Easily control your VirtualBox VMs
 
