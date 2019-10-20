@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/realbucksavage/goboxes/commands/list/interfaces"
 	"github.com/realbucksavage/goboxes/core"
 )
 
@@ -40,4 +41,9 @@ func (l Commands) Vms(running bool) (map[string]string, error) {
 	}
 
 	return vms, nil
+}
+
+// Interfaces gives access to all listable network interfaces
+func (l Commands) Interfaces() interfaces.Commands {
+	return interfaces.Commands{}
 }
