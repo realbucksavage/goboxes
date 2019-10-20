@@ -1,4 +1,4 @@
-# GoBoxes [![Codacy Badge](https://api.codacy.com/project/badge/Grade/cfeb88ce4434454b9138fe7f71bba1bb)](https://www.codacy.com/manual/jgodara/goboxes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realbucksavage/goboxes&amp;utm_campaign=Badge_Grade) 
+# GoBoxes [![Codacy Badge](https://api.codacy.com/project/badge/Grade/cfeb88ce4434454b9138fe7f71bba1bb)](https://www.codacy.com/manual/jgodara/goboxes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realbucksavage/goboxes&amp;utm_campaign=Badge_Grade)
 
 Easily control your VirtualBox VMs
 
@@ -13,7 +13,7 @@ import (
 
 func main() {
   // List all vms (true -> only show running)
-  vms, _ = goboxes.List.Vms(false)
+  vms, _ = goboxes.List().Vms(false)
   for uuid, name := range vms {
     fmt.Printf("VM UUID: %s ; Name: %s\n", uuid, name)
   }
@@ -25,9 +25,21 @@ func main() {
   fmt.Printf("Power state of %s is %s\n", vm.Name, vm.VMState)
 
   // Starts the VM
-  vm.PowerOn()
+  must(vm.PowerOn())
 
   // Stop the VM
-  vm.PowerOff()
+  must(vm.PowerOff())
+
+  // List network interfaces
+  ifs, _ := goboxes.List().Interfaces().Bridged()
+  for _, iface := range ifs {
+    fmt.Println(iface.Name)
+  }
+}
+
+func must(err error) {
+  if err != nil {
+    panic(err)
+  }
 }
 ```
