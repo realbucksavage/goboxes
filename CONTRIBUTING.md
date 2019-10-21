@@ -13,6 +13,6 @@ to this project is fairly easy. Just read on :smile:
 ## How do I contribute
 
 1. Fork the project
-2. Create a feature branch `feature/the-feature` in your fork.
+2. Create a branch `feature|bugfix|refactor/the-feature` in your fork.
 3. Push your feature the feature branch
 4. Create a new PR
